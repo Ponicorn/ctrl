@@ -16,7 +16,19 @@ let input = {
   up: false,
   down: false,
   left: false,
-  right: false
+  right: false,
+  gamepad: {
+    up: false,
+    down: false,
+    left: false,
+    right: false
+  },
+  keyboard: {
+    up: false,
+    down: false,
+    left: false,
+    right: false
+  }
 }
 
 function movePlayer() {
@@ -54,14 +66,20 @@ function showInput() {
  *  - Replacer chaque elements
  */
 function tick () {
-  movePlayer()
   gpinputs()
+  totalInputs()
+  movePlayer()
   showInput()
   window.requestAnimationFrame(tick)
 }
 
-window.requestAnimationFrame(tick)
-
+// Gestion de caffouillage entre clavier et gamepad
+function totalInputs() {
+  input.up    = input.keyboard.up || input.gamepad.up
+  input.down  = input.keyboard.down || input.gamepad.down
+  input.left  = input.keyboard.left || input.gamepad.left
+  input.right = input.keyboard.right || input.gamepad.right
+}
 
 /******************************/
 /*     Gestion des events     */
@@ -71,16 +89,16 @@ window.requestAnimationFrame(tick)
 function keyinput(code, active) {
   switch (code) {
     case 'ArrowUp':
-      input.up = active
+      input.keyboard.up = active
       break
       case 'ArrowDown':
-      input.down = active
+      input.keyboard.down = active
       break
     case 'ArrowLeft':
-      input.left = active
+      input.keyboard.left = active
       break
     case 'ArrowRight':
-      input.right = active
+      input.keyboard.right = active
       break
   }
 }
@@ -106,12 +124,19 @@ function gpinputs() {
   let gps = navigator.getGamepads()
   if (!gps || !gps[0]) return
   let gamepad = gps[0]
-  input.up    = gamepad.buttons[12].pressed || gamepad.axes[1] < -0.25
-  input.down  = gamepad.buttons[13].pressed || gamepad.axes[1] >  0.25
-  input.left  = gamepad.buttons[14].pressed || gamepad.axes[0] < -0.25
-  input.right = gamepad.buttons[15].pressed || gamepad.axes[0] >  0.25 
+  input.gamepad.up    = gamepad.buttons[12].pressed || gamepad.axes[1] < -0.25
+  input.gamepad.down  = gamepad.buttons[13].pressed || gamepad.axes[1] >  0.25
+  input.gamepad.left  = gamepad.buttons[14].pressed || gamepad.axes[0] < -0.25
+  input.gamepad.right = gamepad.buttons[15].pressed || gamepad.axes[0] >  0.25 
 }
 
 // Event (dis)connect
 window.addEventListener("gamepadconnected", e => gphandle(e, true), false)
 window.addEventListener("gamepaddisconnected", e => gphandle(e, false), false)
+
+/**********************/
+/*                    */
+/*      GO GO GO      */
+/*                    */
+/**********************/
+window.requestAnimationFrame(tick)
