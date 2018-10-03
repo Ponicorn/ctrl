@@ -192,22 +192,17 @@ let gyrosensi = 10
 
 
 function gyroGestion(e) {
-  // if (!gyrok) return;
-  console.log(e)
   let x = e.gamma
   let y = e.beta
-
-  console.log(x,y)
   if (basex == null) basex = x
   if (basey == null) basey = y
-  
   input.gyro.right = x - basex > gyrosensi
   input.gyro.left  = x - basex < -gyrosensi
   input.gyro.up   = y - basey < -gyrosensi
   input.gyro.down = y - basey > gyrosensi
 }
 
-window.addEventListener("deviceorientation", gyroGestion, false);
+window.addEventListener("deviceorientation", gyroGestion);
 
 /**********************/
 /*                    */
