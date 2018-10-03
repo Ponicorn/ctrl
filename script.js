@@ -188,7 +188,7 @@ document.querySelectorAll('.input').forEach((el) => {
 /**********************************/
 let basex = null // Avant Arriere
 let basey = null // penche droite/gauche
-let gyrosensi = 20
+let gyrosensi = 10
 
 
 function gyroGestion(e) {
