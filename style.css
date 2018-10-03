@@ -10,13 +10,9 @@ html, body, #app {
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
-#app {
-  background: #2e3131;
-}
-
 #playground {
-  height: calc(100% - 300px);
-  min-height: 300px;
+  background: #2e3131;
+  height: 75%;
   width: 100%;
   position: relative;
 }
@@ -31,7 +27,7 @@ html, body, #app {
 }
 
 #show {
-  height: 300px;
+  height: 25%;
   width: 100%;
   background: #f3f1ef;
   display: flex;
@@ -40,10 +36,10 @@ html, body, #app {
 }
 
 .input {
-  width: 15vw;
-  height: 15vw;
-  max-width: 200px;
-  max-height: 200px;
+  width: 20vmin;
+  height: 20vmin;
+  /* max-width: 200px;
+  max-height: 200px; */
   font-size: 2em;
   font-weight: bold;
   display: flex;
