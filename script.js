@@ -28,6 +28,12 @@ let input = {
     down: false,
     left: false,
     right: false
+  },
+  click: {
+    up: false,
+    down: false,
+    left: false,
+    right: false
   }
 }
 
@@ -75,10 +81,10 @@ function tick () {
 
 // Gestion de caffouillage entre clavier et gamepad
 function totalInputs() {
-  input.up    = input.keyboard.up || input.gamepad.up
-  input.down  = input.keyboard.down || input.gamepad.down
-  input.left  = input.keyboard.left || input.gamepad.left
-  input.right = input.keyboard.right || input.gamepad.right
+  input.up    = input.keyboard.up    || input.gamepad.up    || input.click.up
+  input.down  = input.keyboard.down  || input.gamepad.down  || input.click.down
+  input.left  = input.keyboard.left  || input.gamepad.left  || input.click.left
+  input.right = input.keyboard.right || input.gamepad.right || input.click.right
 }
 
 /******************************/
@@ -91,7 +97,7 @@ function keyinput(code, active) {
     case 'ArrowUp':
       input.keyboard.up = active
       break
-      case 'ArrowDown':
+    case 'ArrowDown':
       input.keyboard.down = active
       break
     case 'ArrowLeft':
@@ -133,6 +139,36 @@ function gpinputs() {
 // Event (dis)connect
 window.addEventListener("gamepadconnected", e => gphandle(e, true), false)
 window.addEventListener("gamepaddisconnected", e => gphandle(e, false), false)
+
+/**********************************/
+/* Gestion des events click/touch */
+/**********************************/
+function clicktouch(position, active) {
+  input.click[closest.dataset.direction] = active
+}
+
+window.addEventListener('mousedown', function(event) {
+  let closest = event.target.closest('.input')
+  if (closest) {
+    input.click[closest.dataset.direction] = true
+  }
+})
+// On annule tout input click quand ça se souleve
+window.addEventListener('mouseup', function(event) {
+  input.click.up = false
+  input.click.down = false
+  input.click.left = false
+  input.click.right = false
+})
+
+document.querySelectorAll('.input').forEach((el) => {
+  el.addEventListener('mousedown',   () => { input.click[el.dataset.direction] = true  }, false)
+  el.addEventListener('mouseup',     () => { input.click[el.dataset.direction] = false }, false)
+  el.addEventListener('touchstart',  () => { input.click[el.dataset.direction] = true  }, false)
+  el.addEventListener('touchend',    () => { input.click[el.dataset.direction] = false }, false)
+  el.addEventListener('touchcancel', () => { input.click[el.dataset.direction] = false }, false)
+  el.addEventListener('touchleave',  () => { input.click[el.dataset.direction] = false }, false)
+})
 
 /**********************/
 /*                    */
