@@ -35,6 +35,12 @@ let input = {
     down: false,
     left: false,
     right: false
+  },
+  gyro: {
+    up: false,
+    down: false,
+    left: false,
+    right: false
   }
 }
 
@@ -88,10 +94,10 @@ function tick () {
 
 // Gestion de caffouillage entre clavier et gamepad
 function totalInputs() {
-  input.up    = input.keyboard.up    || input.gamepad.up    || input.click.up
-  input.down  = input.keyboard.down  || input.gamepad.down  || input.click.down
-  input.left  = input.keyboard.left  || input.gamepad.left  || input.click.left
-  input.right = input.keyboard.right || input.gamepad.right || input.click.right
+  input.up    = input.keyboard.up    || input.gamepad.up    || input.click.up    || input.gyro.up
+  input.down  = input.keyboard.down  || input.gamepad.down  || input.click.down  || input.gyro.down
+  input.left  = input.keyboard.left  || input.gamepad.left  || input.click.left  || input.gyro.left
+  input.right = input.keyboard.right || input.gamepad.right || input.click.right || input.gyro.right
 }
 
 /******************************/
@@ -176,6 +182,33 @@ document.querySelectorAll('.input').forEach((el) => {
   el.addEventListener('touchcancel', () => { input.click[el.dataset.direction] = false }, false)
   el.addEventListener('touchleave',  () => { input.click[el.dataset.direction] = false }, false)
 })
+
+/**********************************/
+/*           Alpha gyro           */
+/**********************************/
+let basex = null // Avant Arriere
+let basey = null // penche droite/gauche
+let gyrok = false
+
+
+function gyroGestion(e) {
+  if (!gyrok) return;
+  let x = e.gamma
+  let y = e.beta
+
+  console.log(x,y)
+  if (basex == null) basex = x
+  if (basey == null) basey = y
+  
+  input.gyro.right = x - basex > 10
+  input.gyro.left  = x - basex < -10
+  input.gyro.up   = y - basey < -10
+  input.gyro.down = y - basey > 10
+}
+
+if(window.DeviceMotionEvent) {
+  window.addEventListener("devicemotion", gyroGestion, false);
+}
 
 /**********************/
 /*                    */
