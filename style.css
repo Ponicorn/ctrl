@@ -17,14 +17,21 @@ html, body, #app {
   position: relative;
 }
 
-#player {
+.player {
   position: absolute;
   top: 0;
   left: 0;
   height: 30px;
   width: 30px;
-  background: #9b59b6;
 }
+.player:nth-child(1) { background: #9b59b6; z-index: 107;  }
+.player:nth-child(2) { background: #a86ebf; z-index: 106;  }
+.player:nth-child(3) { background: #b483c8; z-index: 105;  }
+.player:nth-child(4) { background: #c197d1; z-index: 104;  }
+.player:nth-child(5) { background: #cdacdb; z-index: 103;  }
+.player:nth-child(6) { background: #dac1e4; z-index: 102;  }
+.player:nth-child(7) { background: #e6d6ed; z-index: 101;  }
+.player:nth-child(8) { background: #f3eaf6; z-index: 100;  }
 
 #show {
   height: 25%;

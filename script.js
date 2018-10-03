@@ -2,10 +2,11 @@
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
 // Racourcis pour les div bien utilisé
-let player     = document.querySelector('#player')
+let player     = document.querySelectorAll('.player')
 let playground = document.querySelector('#playground')
 let show       = document.querySelector('#show')
-
+let pxy = []
+player.forEach(p => { pxy.push({x:0, y:0})})
 let gamepad = null
 let speed = 5
 
@@ -38,10 +39,10 @@ let input = {
 }
 
 function movePlayer() {
-  let maxx = playground.clientWidth - player.clientWidth
-  let maxy = playground.clientHeight - player.clientHeight
-  let x = player.getBoundingClientRect().x
-  let y = player.getBoundingClientRect().y
+  let maxx = playground.clientWidth - player[0].clientWidth
+  let maxy = playground.clientHeight - player[0].clientHeight
+  let x = player[0].getBoundingClientRect().x
+  let y = player[0].getBoundingClientRect().y
   
   if (input.up)    y -= speed
   if (input.down)  y += speed
@@ -53,8 +54,14 @@ function movePlayer() {
   if (x < 0) x = 0
   if (y < 0) y = 0
   
-  player.style.top  = `${y}px`
-  player.style.left = `${x}px`
+  // On ajoute au début du tableau
+  pxy.reverse().push({x,y})
+  pxy.reverse().pop()
+
+  player.forEach((p,i) => {
+    p.style.top  = `${pxy[i].y}px`
+    p.style.left = `${pxy[i].x}px`
+  })
 }
 
 function showInput() {
