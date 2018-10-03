@@ -188,11 +188,12 @@ document.querySelectorAll('.input').forEach((el) => {
 /**********************************/
 let basex = null // Avant Arriere
 let basey = null // penche droite/gauche
-let gyrok = false
+let gyrosensi = 20
 
 
 function gyroGestion(e) {
-  if (!gyrok) return;
+  // if (!gyrok) return;
+  console.log(e)
   let x = e.gamma
   let y = e.beta
 
@@ -200,15 +201,13 @@ function gyroGestion(e) {
   if (basex == null) basex = x
   if (basey == null) basey = y
   
-  input.gyro.right = x - basex > 10
-  input.gyro.left  = x - basex < -10
-  input.gyro.up   = y - basey < -10
-  input.gyro.down = y - basey > 10
+  input.gyro.right = x - basex > gyrosensi
+  input.gyro.left  = x - basex < -gyrosensi
+  input.gyro.up   = y - basey < -gyrosensi
+  input.gyro.down = y - basey > gyrosensi
 }
 
-if(window.DeviceMotionEvent) {
-  window.addEventListener("devicemotion", gyroGestion, false);
-}
+window.addEventListener("deviceorientation", gyroGestion, false);
 
 /**********************/
 /*                    */
