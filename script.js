@@ -251,10 +251,10 @@ function gyroGestion(e) {
   x = x - basex // Positif droite -- Negatif Gauche 
   y = y - basey // Positif bas -- Negatif haut
 
-  let sensix = 15
-  let sensiy = 30
-  let miny = 5
-  let minx = 5 
+  let sensix = 20
+  let sensiy = 20
+  let miny = 3
+  let minx = 3 
 
   y = gyroCalculAxis(y, sensiy, miny)
   x = gyroCalculAxis(x, sensix, minx)
