@@ -275,8 +275,8 @@ function toggleGyro() {
   gyrodiv.className = gyro ? 'gyro active' : 'gyro'
 }
 
-gyrodiv.addEventListener('mousedown',  toggleGyro, false)
-gyrodiv.addEventListener('touchstart', toggleGyro, false)
+gyrodiv.addEventListener('mousedown',  toggleGyro)
+// gyrodiv.addEventListener('touchstart', toggleGyro, false)
 window.addEventListener("deviceorientation", gyroGestion);
 
 /**********************/
