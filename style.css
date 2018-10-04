@@ -42,9 +42,9 @@ html, body, #app {
   align-items: center;
 }
 
-.input {
-  width: 20vmin;
-  height: 20vmin;
+.input, .gyro {
+  width: 18vmin;
+  height: 18vmin;
   font-size: 2em;
   font-weight: bold;
   display: flex;
@@ -61,7 +61,7 @@ html, body, #app {
   -webkit-tap-highlight-color: transparent;
 }
 
-.left .left, .down .down, .up .up, .right .right {
+.left .left, .down .down, .up .up, .right .right, .gyro.active {
   border-color: #2e3131;
   color: #2e3131;
 }

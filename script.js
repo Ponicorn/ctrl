@@ -5,6 +5,8 @@ window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequest
 let player     = document.querySelectorAll('.player')
 let playground = document.querySelector('#playground')
 let show       = document.querySelector('#show')
+let gyrodiv    = document.querySelector('#gyro')
+let gyro = false
 let pxy = []
 player.forEach(p => { pxy.push({x:0, y:0})})
 let gamepad = null
@@ -79,12 +81,12 @@ function movePlayerAnalog() {
   if (input.gamepad.x > 0 || input.gamepad.x < 0) 
     x += Math.round(input.gamepad.x * speed)
   else 
-    x += Math.round(input.gyro.x * speed)
+    x += gyro ? Math.round(input.gyro.x * speed) : 0
 
   if (input.gamepad.y > 0 || input.gamepad.y < 0) 
     y += Math.round(input.gamepad.y * speed)
   else 
-    y += Math.round(input.gyro.y * speed)
+    y += gyro ? Math.round(input.gyro.y * speed) : 0
 
   if (x > maxx) x = maxx
   if (y > maxy) y = maxy
@@ -268,6 +270,13 @@ function gyroCalculAxis(val, sensi, min) {
   return val / sensi
 }
 
+function toggleGyro() {
+  gyro = !gyro
+  gyrodiv.className = gyro ? 'gyro active' : 'gyro'
+}
+
+gyrodiv.addEventListener('mousedown',  toggleGyro, false)
+gyrodiv.addEventListener('touchstart', toggleGyro, false)
 window.addEventListener("deviceorientation", gyroGestion);
 
 /**********************/
