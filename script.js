@@ -270,9 +270,13 @@ function gyroCalculAxis(val, sensi, min) {
   return val / sensi
 }
 
+let clicklast = Date.now()
 function toggleGyro() {
+  let click = Date.now()
+  if (click - clicklast < 100) return
   gyro = !gyro
   gyrodiv.className = gyro ? 'gyro active' : 'gyro'
+  clicklast = click
 }
 
 gyrodiv.addEventListener('mousedown',  toggleGyro)
