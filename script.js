@@ -231,16 +231,18 @@ document.querySelectorAll('.input').forEach((el) => {
 /**********************************/
 /*           Alpha gyro           */
 /**********************************/
-let basex = null // Avant Arriere
-let basey = null // penche droite/gauche
-let gyrosensi = 20
+let basex   = null // Avant Arriere
+let basey   = null // penche droite/gauche
 
 
 function gyroGestion(e) {
   let x = e.gamma
   let y = e.beta
-  if (basex == null) basex = x
-  if (basey == null) basey = y
+  
+  if (basey == null) {
+    basey = y
+    basex = x
+  }
 
   // Normalisation du x et y, entre 0 et 1
 
@@ -252,18 +254,18 @@ function gyroGestion(e) {
   let miny = 5
   let minx = 5 
 
-  if (x > sensix) input.gyro.x = 1
-  if (y > sensiy) input.gyro.y = 1
+  y = gyroCalculAxis(y, sensiy, miny)
+  x = gyroCalculAxis(x, sensix, minx)
 
-  if (x < -sensix) input.gyro.x = -1
-  if (y < -sensiy) input.gyro.y = -1
-  
-  if (x > -5 && x < 5) input.gyro.x = 0
-  if (y > -5 && y < 5) input.gyro.y = 0
+  input.gyro.y = y
+  input.gyro.x = x
+}
 
-  if (x > -sensix && x < sensix) input.gyro.x = x / sensix
-  if (y > -sensiy && y < sensiy) input.gyro.y = y / sensiy
-
+function gyroCalculAxis(val, sensi, min) {
+  if (val > sensi)  return 1
+  if (val < -sensi) return -1
+  if (val > -min && val < min) return 0
+  return val / sensi
 }
 
 window.addEventListener("deviceorientation", gyroGestion);
