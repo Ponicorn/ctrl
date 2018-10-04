@@ -22,7 +22,9 @@ let input = {
     up: false,
     down: false,
     left: false,
-    right: false
+    right: false,
+    x: 0,
+    y: 0
   },
   keyboard: {
     up: false,
@@ -37,10 +39,8 @@ let input = {
     right: false
   },
   gyro: {
-    up: false,
-    down: false,
-    left: false,
-    right: false
+    x: 0,
+    y: 0,
   }
 }
 
@@ -70,6 +70,37 @@ function movePlayer() {
   })
 }
 
+function movePlayerAnalog() {
+  let maxx = playground.clientWidth - player[0].clientWidth
+  let maxy = playground.clientHeight - player[0].clientHeight
+  let x = player[0].getBoundingClientRect().x
+  let y = player[0].getBoundingClientRect().y
+
+  if (input.gamepad.x > 0 || input.gamepad.x < 0) 
+    x += Math.round(input.gamepad.x * speed)
+  else 
+    x += Math.round(input.gyro.x * speed)
+
+  if (input.gamepad.y > 0 || input.gamepad.y < 0) 
+    y += Math.round(input.gamepad.y * speed)
+  else 
+    y += Math.round(input.gyro.y * speed)
+
+  if (x > maxx) x = maxx
+  if (y > maxy) y = maxy
+  if (x < 0) x = 0
+  if (y < 0) y = 0
+
+   // On ajoute au début du tableau
+   pxy.reverse().push({x,y})
+   pxy.reverse().pop()
+ 
+   player.forEach((p,i) => {
+     p.style.top  = `${pxy[i].y}px`
+     p.style.left = `${pxy[i].x}px`
+   })
+}
+
 function showInput() {
   let showclass = ''
   if (input.up)    showclass += 'up '
@@ -88,16 +119,17 @@ function tick () {
   gpinputs()
   totalInputs()
   movePlayer()
+  movePlayerAnalog()
   showInput()
   window.requestAnimationFrame(tick)
 }
 
 // Gestion de caffouillage entre clavier et gamepad
 function totalInputs() {
-  input.up    = input.keyboard.up    || input.gamepad.up    || input.click.up    || input.gyro.up
-  input.down  = input.keyboard.down  || input.gamepad.down  || input.click.down  || input.gyro.down
-  input.left  = input.keyboard.left  || input.gamepad.left  || input.click.left  || input.gyro.left
-  input.right = input.keyboard.right || input.gamepad.right || input.click.right || input.gyro.right
+  input.up    = input.keyboard.up    || input.gamepad.up    || input.click.up
+  input.down  = input.keyboard.down  || input.gamepad.down  || input.click.down
+  input.left  = input.keyboard.left  || input.gamepad.left  || input.click.left
+  input.right = input.keyboard.right || input.gamepad.right || input.click.right
 }
 
 /******************************/
@@ -143,10 +175,23 @@ function gpinputs() {
   let gps = navigator.getGamepads()
   if (!gps || !gps[0]) return
   let gamepad = gps[0]
-  input.gamepad.up    = gamepad.buttons[12].pressed || gamepad.axes[1] < -0.25
-  input.gamepad.down  = gamepad.buttons[13].pressed || gamepad.axes[1] >  0.25
-  input.gamepad.left  = gamepad.buttons[14].pressed || gamepad.axes[0] < -0.25
-  input.gamepad.right = gamepad.buttons[15].pressed || gamepad.axes[0] >  0.25 
+  
+  // Dpad
+  input.gamepad.up    = gamepad.buttons[12].pressed //|| gamepad.axes[1] < -0.25
+  input.gamepad.down  = gamepad.buttons[13].pressed //|| gamepad.axes[1] >  0.25
+  input.gamepad.left  = gamepad.buttons[14].pressed //|| gamepad.axes[0] < -0.25
+  input.gamepad.right = gamepad.buttons[15].pressed //|| gamepad.axes[0] >  0.25 
+
+  // stick analogique brut
+  let x = gamepad.axes[0]
+  let y = gamepad.axes[1]
+  let sensi = 0.2
+  // polissage du stick analogique
+  if (x < sensi && x > -sensi) x = 0
+  if (y < sensi && y > -sensi) y = 0
+
+  input.gamepad.x = x
+  input.gamepad.y = y
 }
 
 // Event (dis)connect
@@ -196,10 +241,29 @@ function gyroGestion(e) {
   let y = e.beta
   if (basex == null) basex = x
   if (basey == null) basey = y
-  input.gyro.right = x - basex > gyrosensi
-  input.gyro.left  = x - basex < -gyrosensi
-  input.gyro.up   = y - basey < -gyrosensi
-  input.gyro.down = y - basey > gyrosensi
+
+  // Normalisation du x et y, entre 0 et 1
+
+  x = x - basex // Positif droite -- Negatif Gauche 
+  y = y - basey // Positif bas -- Negatif haut
+
+  let sensix = 15
+  let sensiy = 30
+  let miny = 5
+  let minx = 5 
+
+  if (x > sensix) input.gyro.x = 1
+  if (y > sensiy) input.gyro.y = 1
+
+  if (x < -sensix) input.gyro.x = -1
+  if (y < -sensiy) input.gyro.y = -1
+  
+  if (x > -5 && x < 5) input.gyro.x = 0
+  if (y > -5 && y < 5) input.gyro.y = 0
+
+  if (x > -sensix && x < sensix) input.gyro.x = x / sensix
+  if (y > -sensiy && y < sensiy) input.gyro.y = y / sensiy
+
 }
 
 window.addEventListener("deviceorientation", gyroGestion);
