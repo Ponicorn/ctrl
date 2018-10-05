@@ -233,28 +233,15 @@ document.querySelectorAll('.input').forEach((el) => {
 /**********************************/
 /*           Alpha gyro           */
 /**********************************/
-let basex   = null // Avant Arriere
-let basey   = null // penche droite/gauche
 
+let sensix = 33
+let sensiy = 33
+let miny = 3
+let minx = 3 
 
 function gyroGestion(e) {
   let x = e.gamma
   let y = e.beta
-  
-  if (basey == null) {
-    basey = y
-    basex = x
-  }
-
-  // Normalisation du x et y, entre 0 et 1
-
-  x = x - basex // Positif droite -- Negatif Gauche 
-  y = y - basey // Positif bas -- Negatif haut
-
-  let sensix = 20
-  let sensiy = 20
-  let miny = 3
-  let minx = 3 
 
   y = gyroCalculAxis(y, sensiy, miny)
   x = gyroCalculAxis(x, sensix, minx)
@@ -264,10 +251,10 @@ function gyroGestion(e) {
 }
 
 function gyroCalculAxis(val, sensi, min) {
+  if (val < min && val > -min) return 0
   if (val > sensi)  return 1
   if (val < -sensi) return -1
-  if (val > -min && val < min) return 0
-  return val / sensi
+  return val / (sensi - min)
 }
 
 let clicklast = Date.now()
